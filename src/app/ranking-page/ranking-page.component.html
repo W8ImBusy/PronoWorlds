@@ -1,0 +1,16 @@
+<table mat-table [dataSource]="joueurs$">
+    <ng-container matColumnDef="Position">
+        <th mat-header-cell *matHeaderCellDef> N° </th>
+        <td mat-cell *matCellDef="let joueur"> {{joueur.position}}</td>
+    </ng-container>
+    <ng-container matColumnDef="Name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let joueur"> {{joueur.name}}</td>
+    </ng-container>
+    <ng-container matColumnDef="Score">
+        <th mat-header-cell *matHeaderCellDef> Score </th>
+        <td mat-cell *matCellDef="let joueur"> {{joueur.score}}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
