@@ -1,18 +1,18 @@
 .form-box {
     box-sizing: border-box;
-    width: 50%;
+    width: 35%;
     margin: 150px auto;
     padding: 10px 30px;
     box-shadow: lightgray 4px 4px 40px;
+    text-align: center;
   }
-  
-  .form-group {
-    margin: 10px auto;
-    width: 80%;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  input, textarea {
-    width: 50%;
-  }
+
+ mat-form-field{
+  width: 100%;
+ }
+
+ #authentication-div{
+  display:flex;
+  margin: 20px 0px;
+  justify-content: space-evenly;
+ }

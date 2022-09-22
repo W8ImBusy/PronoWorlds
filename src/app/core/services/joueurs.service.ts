@@ -1,6 +1,5 @@
-import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Joueur } from "../models/joueur.model";
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/compat/database'
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -8,15 +7,18 @@ import { Observable } from "rxjs";
 })
 export class JoueursService{
     
-    constructor(private http: HttpClient) {}
+    constructor(private firebaseApi: AngularFireDatabase) {}
 
-    getAllJoueurs(): Observable<Joueur[]>{
-        return this.http.get<Joueur[]>('http://localhost:3000/api/joueurs');
+    createUser(email: string, nickname: string, user: any){
+        return this.firebaseApi.database.ref('users').child(user.uid).set({
+            email:email,
+            nickname:nickname,
+            score: 0,
+            position: 1
+        })
     }
 
-    getJoueurById(id: number): Observable<Joueur> {
-        return this.http.get<Joueur>(`http://localhost:3000/api/joueurs/${id}`);
+    getAllUsers(): Observable<any>{
+        return this.firebaseApi.list('users').valueChanges();
     }
-
-
 }

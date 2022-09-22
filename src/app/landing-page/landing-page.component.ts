@@ -1,9 +1,5 @@
-import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { Joueur } from '../core/models/joueur.model';
-import { JoueursService } from '../core/services/joueurs.service';
-import { map } from 'rxjs';
-import { take } from 'rxjs';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -12,11 +8,21 @@ import { take } from 'rxjs';
 })
 export class LandingPageComponent implements OnInit {
 
-  constructor(private jService: JoueursService) { }
+  user!: any;
+  signedIn!: boolean;
 
-  joueur$!: Observable<Joueur>;
+  constructor(private auth: AuthService) { 
+  }
+
   ngOnInit(): void {
-    this.joueur$ = this.jService.getJoueurById(1);
+    this.auth.getCurrentUser().subscribe(user => {
+      this.user = user;
+      if (this.user) {
+        this.signedIn = true;
+      } else {
+        this.signedIn = false;
+      }
+    });
   }
 
 }

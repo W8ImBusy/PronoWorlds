@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFireList } from '@angular/fire/compat/database';
 import { Observable } from 'rxjs';
-import { Joueur } from '../core/models/joueur.model';
 import { JoueursService } from '../core/services/joueurs.service';
-import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-ranking-page',
@@ -11,15 +10,11 @@ import { tap } from 'rxjs';
 })
 export class RankingPageComponent implements OnInit {
 
-  joueurs$ !: Observable<Joueur[]>;
+  joueurs$ !: Observable<any>;
   displayedColumns: string[] = ["Position", "Name", "Score"];
   constructor(private jService : JoueursService) {}
 
-  
   ngOnInit(): void {
-    this.joueurs$ = this.jService.getAllJoueurs().pipe(
-      tap(value => console.log(value))
-    );
-
+    this.joueurs$ = this.jService.getAllUsers();
   }
 }

@@ -7,9 +7,12 @@
     <button mat-icon-button color="basic">
         <mat-icon routerLink="">home</mat-icon>
     </button>
-    <button mat-icon-button color="basic">
-        <mat-icon routerLink="login">lock</mat-icon>
-    </button>   
+    <button *ngIf="signedIn" mat-icon-button color="basic">
+        <mat-icon (click)="this.auth.logout()">power_settings_new</mat-icon>
+    </button>
+    <button *ngIf="!signedIn" mat-icon-button color="basic">
+        <mat-icon routerLink="login">lock_open</mat-icon>
+    </button>
 </mat-toolbar>
 <mat-sidenav-container>
     <mat-sidenav #sidenav position="start" mode="push">

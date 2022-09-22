@@ -1,0 +1,33 @@
+<div class="form-box">
+    <h2>Inscription</h2>
+    <form [formGroup]="loginForm" (submit)="register()">
+        <div>
+            <div *ngIf="notify" class="alert alert-success">
+                {{ notify }}
+            </div>
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Faker.Le-Nul@rincé.fr" formControlName="email">
+                <mat-error>{{getEmailErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Nickname</mat-label>
+                <input matInput placeholder="XxPluton17xX" formControlName="nickname">
+                <mat-error>{{getNicknameErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>
+                <input [type]="hide ? 'password' : 'text'" matInput placeholder="ABC123!" formControlName="password">
+                <button type="button" mat-icon-button matSuffix (click)="hide = !hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error>{{getPasswordErrorMessage()}}</mat-error>
+                <mat-hint>Pas d'inspi? Mets Arisiii</mat-hint>
+            </mat-form-field>
+        </div>
+        <div id="authentication-div">
+            <button id="login-button" mat-raised-button color="primary" [disabled]="!loginForm.valid" type="submit">S'inscrire</button>
+            <button type="button" id="register-button" mat-raised-button color="warn" routerLink="/login">Déjà inscrit?</button>
+        </div>     
+    </form>
+</div> 
