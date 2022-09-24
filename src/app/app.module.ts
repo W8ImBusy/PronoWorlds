@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -12,6 +12,11 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
+import { MatchListPageComponent } from './match-list-page/match-list-page.component';
+import { SingleMatchPageComponent } from './single-match-page/single-match-page.component';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr'
+registerLocaleData(localeFr);
 
 @NgModule({
   declarations: [
@@ -20,6 +25,8 @@ import { environment } from 'src/environments/environment';
     RankingPageComponent,
     LoginPageComponent,
     RegisterPageComponent,
+    MatchListPageComponent,
+    SingleMatchPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +36,7 @@ import { environment } from 'src/environments/environment';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
-  providers: [],
+  providers: [{ provide: LOCALE_ID, useValue: 'fr-FR'}],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

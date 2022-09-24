@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
+import { JoueursService } from '../core/services/joueurs.service';
+import { MatchsService } from '../core/services/matchs.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -11,7 +13,7 @@ export class LandingPageComponent implements OnInit {
   user!: any;
   signedIn!: boolean;
 
-  constructor(private auth: AuthService) { 
+  constructor(private auth: AuthService, public mService: MatchsService, public jService: JoueursService) { 
   }
 
   ngOnInit(): void {

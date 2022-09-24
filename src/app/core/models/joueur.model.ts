@@ -1,19 +1,12 @@
 import { Pronostic } from './pronostic.model'
 export class Joueur {
-    id: number;
-    name: string;
-    password : string;
+    email: string;
+    nickname: string;
     score: number;
-    position: number;
-    pronostics: Pronostic[];
 
-    constructor(id: number, name: string, password: string, position: number, score: number){
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.score = score;
-        this.position = position;
-        this.pronostics = [];
-        
+    constructor(email: string, nickname: string, password: string, score: number){
+        this.email = email;
+        this.nickname = nickname;
+        this.score = score;        
     }
 }
