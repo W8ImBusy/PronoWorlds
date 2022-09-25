@@ -13,7 +13,7 @@ export class MatchsService{
         this.currentDate = new Date();
     }
 
-    getMatchsOfADayHelper(matchs : any[], date : Date): any[]{
+    getMatchsOfTodayHelper(matchs : any[], date : Date): any[]{
         var matchsToday: any[] = [];
         matchs.forEach(match => {
             if (match.date == formatDate(date,'dd/MM', 'fr')) {
@@ -21,8 +21,24 @@ export class MatchsService{
             }
         });
         return matchsToday;
-
     }
+
+    getUpcomingMatchsHelper(matchs: any[], currentDate :Date): any[]{
+        var matchsUpcoming: any[] = [];
+        matchs.forEach(match => {
+            var currentDateFormated = formatDate(currentDate, 'dd/MM', 'fr');
+            var upcomingDateFormated = match.date;
+            var upcomingDay = +upcomingDateFormated.split('/',2)[0];
+            var upcomingMonth = +upcomingDateFormated.split('/',2)[1];
+            var currentDay = +currentDateFormated.split('/',2)[0];
+            var currentMonth = +currentDateFormated.split('/',2)[1];
+            if (((upcomingMonth = currentMonth) && (upcomingDay > currentDay)) || (upcomingMonth > currentMonth)) {
+                matchsUpcoming.push(match);
+            }
+        });
+        return matchsUpcoming;
+    }
+
     getAllMatchs(): Observable<any>{
         return this.firebaseApi.list('matchs').valueChanges();
     }
@@ -38,9 +54,14 @@ export class MatchsService{
             map(matchs => matchs[id+1])
         );
     }
-    getMatchsOfADay(date: Date): Observable<any>{
+    getMatchsOfToday(date: Date): Observable<any>{
         return this.getAllMatchs().pipe(
-            map(matchs => this.getMatchsOfADayHelper(matchs, date)),
+            map(matchs => this.getMatchsOfTodayHelper(matchs, date)),
+        )
+    }
+    getUpcomingMatchs(date: Date): Observable<any>{
+        return this.getAllMatchs().pipe(
+            map(matchs => this.getUpcomingMatchsHelper(matchs, date))
         )
     }
 

@@ -11,17 +11,18 @@ import { Router } from '@angular/router';
 })
 export class MatchListPageComponent implements OnInit {
 
-  matchs$!: Observable<any>;
+  todayMatchs$!: Observable<any>;
+  upcomingMatchs$!: Observable<any>;
   currentDate!: Date;
-  dateModif!: string;
+  test!: any;
 
   constructor(private mService:MatchsService, private router:Router) { }
 
   ngOnInit(): void {
     this.currentDate = new Date();
-    this.matchs$ = this.mService.getMatchsOfADay(this.currentDate);
-    this.dateModif = this.currentDate.getDate() + '/0' + `${this.currentDate.getMonth()+1}`;
-    this.dateModif = formatDate(new Date(),'dd/MM', 'fr');
+    this.todayMatchs$ = this.mService.getMatchsOfToday(this.currentDate);
+    this.upcomingMatchs$ = this.mService.getUpcomingMatchs(this.currentDate);
+    this.test = formatDate(this.currentDate,'dd/MM','fr').split('/',2)[1];
   }
 
   onPronostic(id:number){
