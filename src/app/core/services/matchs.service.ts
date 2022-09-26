@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, map, filter, tap } from "rxjs";
+import { Observable, map, filter, tap, from, take } from "rxjs";
 import { AngularFireDatabase } from "@angular/fire/compat/database";
 import { formatDate } from "@angular/common";
 
@@ -39,14 +39,28 @@ export class MatchsService{
         return matchsUpcoming;
     }
 
-    getAllMatchs(): Observable<any>{
-        return this.firebaseApi.list('matchs').valueChanges();
+    isPronostiquedMatchByUser(pronos : any[], userId: string): boolean{
+        var pronostiqued : boolean = false;
+        pronos.forEach(prono => {
+            if (prono.userId === userId){
+                pronostiqued = true;
+            }
+        });
+        return pronostiqued;
     }
 
-    getNumberOfMatchs(): Observable<number>{
-        return this.getAllMatchs().pipe(
-            map(matchs => matchs.length)
-        )
+    getAllPronostiquedByUserHelper(matchs: any[], userId: string): boolean[]{
+        var pronostiqued : boolean[] = [];
+        matchs.forEach(match =>{
+            this.getAllPronosticsOfMatch(match.id).pipe(take(1)).subscribe(
+                pronos => pronostiqued.push(this.isPronostiquedMatchByUser(pronos, userId))
+            )
+        });
+        return pronostiqued;
+    }
+
+    getAllMatchs(): Observable<any>{
+        return this.firebaseApi.list('matchs').valueChanges();
     }
 
     getMatchByID(id : number): Observable<any> {
@@ -68,9 +82,20 @@ export class MatchsService{
     setPronosticOnMatch(idMatch: number, idUser: string, score: string, winner: string) {
         this.firebaseApi.database.ref('matchs').child(`${idMatch}`).child('pronostics').child(idUser).set({
             score: score,
-            winner: winner
+            winner: winner,
+            userId : idUser
         })
     }
+     
+    getAllPronosticsOfMatch(matchId : number){
+        return this.firebaseApi.list('matchs/'+`${matchId}`+"/pronostics").valueChanges();
+    }
+    getAllPronostiquedByUser(userId: string): Observable<boolean[]>{
+        return this.getAllMatchs().pipe(
+            map(matchs => this.getAllPronostiquedByUserHelper(matchs, userId))
+        )
+    }
+
 
 
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, tap, map } from 'rxjs';
 import { MatchsService } from '../core/services/matchs.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -18,7 +18,7 @@ export class SingleMatchPageComponent implements OnInit {
   teams!: string[];
   pronoForm!: FormGroup;
   user!: any;
-  constructor(private aRoute: ActivatedRoute, private mService:MatchsService, private formBuilder: FormBuilder, private auth:AuthService ) { }
+  constructor(private aRoute: ActivatedRoute, private mService:MatchsService, private formBuilder: FormBuilder, private auth:AuthService, private router:Router) { }
 
   ngOnInit(): void {
     this.matchId = +this.aRoute.snapshot.params['id'];
@@ -41,6 +41,8 @@ export class SingleMatchPageComponent implements OnInit {
   
   onSetPronostic(){
     this.mService.setPronosticOnMatch(this.matchId, this.user.uid, this.pronoForm.controls['score'].value, this.pronoForm.controls['vainqueur'].value )
+    this.router.navigateByUrl('matchs')
   }
+
 
 }
