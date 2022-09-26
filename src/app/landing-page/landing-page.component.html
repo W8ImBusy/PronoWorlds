@@ -1,2 +1,2 @@
-<p *ngIf="signedIn"> {{user.uid}} est connecté</p>
-<p> {{signedIn }}</p>
+<h1 *ngIf="signedIn"> Bienvenue, {{user.displayName}}</h1>
+<h1 *ngIf="!signedIn"> Bienvenue</h1>

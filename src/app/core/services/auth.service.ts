@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth} from '@angular/fire/compat/auth'
 import { Router } from "@angular/router";
+import { Observable, map, take } from "rxjs";
 import { JoueursService } from "./joueurs.service";
 @Injectable({
     providedIn: 'root'
@@ -44,9 +45,10 @@ export class AuthService {
         })
         
     }
-    getCurrentUser(){
+    getCurrentUser(): Observable<any>{
         return this.fireauth.authState;
     }
+
 
 }
     

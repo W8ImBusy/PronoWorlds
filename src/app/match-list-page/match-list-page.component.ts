@@ -14,7 +14,6 @@ export class MatchListPageComponent implements OnInit {
   todayMatchs$!: Observable<any>;
   upcomingMatchs$!: Observable<any>;
   currentDate!: Date;
-  test!: any;
 
   constructor(private mService:MatchsService, private router:Router) { }
 
@@ -22,7 +21,6 @@ export class MatchListPageComponent implements OnInit {
     this.currentDate = new Date();
     this.todayMatchs$ = this.mService.getMatchsOfToday(this.currentDate);
     this.upcomingMatchs$ = this.mService.getUpcomingMatchs(this.currentDate);
-    this.test = formatDate(this.currentDate,'dd/MM','fr').split('/',2)[1];
   }
 
   onPronostic(id:number){

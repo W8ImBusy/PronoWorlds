@@ -8,11 +8,15 @@ h1{
     padding: 20px 0px;
     width: 30%;
     box-shadow: lightgray 4px 4px 40px;  
-    text-align: center;  
+    text-align: center; 
+    
 }
 
 .all-matchs-div{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    & :hover{
+        transform: scale(1.1)
+    } 
 }

@@ -51,7 +51,7 @@ export class MatchsService{
 
     getMatchByID(id : number): Observable<any> {
         return this.getAllMatchs().pipe(
-            map(matchs => matchs[id+1])
+            map(matchs => matchs[id-1])
         );
     }
     getMatchsOfToday(date: Date): Observable<any>{
@@ -65,8 +65,8 @@ export class MatchsService{
         )
     }
 
-    setPronosticOnMatch(idMatch: number, idUser: number, score: string, winner: string) {
-        this.firebaseApi.database.ref('matchs').child(`${idMatch}`).child('pronostics').child(`${idUser}`).set({
+    setPronosticOnMatch(idMatch: number, idUser: string, score: string, winner: string) {
+        this.firebaseApi.database.ref('matchs').child(`${idMatch}`).child('pronostics').child(idUser).set({
             score: score,
             winner: winner
         })

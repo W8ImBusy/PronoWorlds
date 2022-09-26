@@ -1,1 +1,36 @@
-<p>single-match-page works!</p>
+<div class="form-box">
+    
+    <h1>{{(match$ | async)?.E1}} VS {{(match$ | async)?.E2}}  </h1>
+    <form [formGroup]="pronoForm">
+        <div class="select-div">
+            <div>    
+                <h4>Vainqueur</h4>
+                <mat-form-field appearance="fill">
+                <mat-label>Vainqueur</mat-label>
+                <mat-select formControlName="vainqueur">
+                    <mat-option *ngFor="let team of teams" [value]="team">
+                    {{team}}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf="scores.length !== 0">
+                <h4>Ecart au score</h4>
+                <mat-form-field appearance="fill">
+                    <mat-label>Ecart au score</mat-label>
+                    <mat-select formControlName="score">
+                        <mat-option *ngFor="let score of scores" [value]="score">
+                        {{score}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <button mat-raised-button color="primary" (click)="onSetPronostic()"> Valider le pronostic </button>
+</div>    
+
+
+
+
+
