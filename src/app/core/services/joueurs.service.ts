@@ -15,7 +15,7 @@ export class JoueursService{
                     this.firebaseApi.database.ref('users').child(user.uid).set({
                         email:email,
                         nickname:nickname,
-                        key : user.uid,
+                        id : user.uid,
                         position : users.length,
                         score: 0
                 }
@@ -37,7 +37,7 @@ export class JoueursService{
                 var sameRank = 1;
                 users.forEach(user => {
                     if (users.indexOf(user) == 0){
-                        this.firebaseApi.database.ref('users').child(user.key).update({position: index});
+                        this.firebaseApi.database.ref('users').child(user.id).update({position: index});
                     } else if (users.indexOf(user) >= 1){
                         var prec = users[users.indexOf(user)-1];
                         if (prec.score == user.score){
