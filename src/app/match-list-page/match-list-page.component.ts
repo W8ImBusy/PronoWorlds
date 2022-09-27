@@ -11,9 +11,11 @@ import { AuthService } from '../core/services/auth.service';
 })
 export class MatchListPageComponent implements OnInit {
 
-  todayMatchs$!: Observable<any>;
-  upcomingMatchs$!: Observable<any>;
+  currentMatchs$!: Observable<any>;
+  tomorrowMatchs$!: Observable<any>;
+  afterTomorrowMatchs$!: Observable<any>;
   currentDate!: Date;
+  tomorrowDate!: Date;
   userId!: string;
   pronostiqued!: boolean[];
 
@@ -21,8 +23,14 @@ export class MatchListPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentDate = new Date();
-    this.todayMatchs$ = this.mService.getMatchsOfToday(this.currentDate);
-    this.upcomingMatchs$ = this.mService.getUpcomingMatchs(this.currentDate);
+
+    this.tomorrowDate = new Date();
+    this.tomorrowDate.setDate(this.currentDate.getDate()+1);
+
+    this.currentMatchs$ = this.mService.getMatchsOfDay(this.currentDate);
+    this.tomorrowMatchs$ = this.mService.getMatchsOfDay(this.tomorrowDate);
+    this.afterTomorrowMatchs$ = this.mService.getMatchsOfWeek(this.tomorrowDate);
+
     this.auth.getCurrentUser().subscribe(
       user => {
         this.userId = user.uid;

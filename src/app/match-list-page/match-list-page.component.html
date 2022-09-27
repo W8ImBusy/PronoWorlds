@@ -1,19 +1,23 @@
 <div>
     <h1>Matchs d'aujourd'hui</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of todayMatchs$ | async" >
+        <div class="match-div" *ngFor="let match of currentMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1] }">
+            <h2> {{match.E1}} vs {{match.E2}}</h2>
+            <p> {{match.date}} à {{match.heure}} </p>
+            <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>
+        </div>   
+    </div>
+    <h1>Matchs de demain</h1>
+    <div class="all-matchs-div">
+        <div class="match-div" *ngFor="let match of tomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1]}">
             <h2> {{match.E1}} vs {{match.E2}}</h2>
             <p> {{match.date}} à {{match.heure}} </p>
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>
         </div>
-        
     </div>
-</div>
-
-<div>
-    <h1>Matchs à venir</h1>
+    <h1>Matchs de la semaine</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of upcomingMatchs$ | async" [ngClass]="{'pronostiqued': pronostiqued[match.id-1] === true}">  
+        <div class="match-div" *ngFor="let match of afterTomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1]}">
             <h2> {{match.E1}} vs {{match.E2}}</h2>
             <p> {{match.date}} à {{match.heure}} </p>
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>

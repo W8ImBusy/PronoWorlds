@@ -8,22 +8,20 @@ import { formatDate } from "@angular/common";
 })
 export class MatchsService{
 
-    currentDate!: Date;
     constructor(private firebaseApi: AngularFireDatabase) {
-        this.currentDate = new Date();
     }
 
-    getMatchsOfTodayHelper(matchs : any[], date : Date): any[]{
-        var matchsToday: any[] = [];
+    getMatchsOfDayHelper(matchs : any[], date : Date): any[]{
+        var matchsDay: any[] = [];
         matchs.forEach(match => {
             if (match.date == formatDate(date,'dd/MM', 'fr')) {
-                matchsToday.push(match)
+                matchsDay.push(match)
             }
         });
-        return matchsToday;
+        return matchsDay;
     }
 
-    getUpcomingMatchsHelper(matchs: any[], currentDate :Date): any[]{
+    getMatchsOfWeekHelper(matchs: any[], currentDate :Date): any[]{
         var matchsUpcoming: any[] = [];
         matchs.forEach(match => {
             var currentDateFormated = formatDate(currentDate, 'dd/MM', 'fr');
@@ -68,14 +66,24 @@ export class MatchsService{
             map(matchs => matchs[id-1])
         );
     }
-    getMatchsOfToday(date: Date): Observable<any>{
+    getMatchsOfDay(date: Date): Observable<any>{
         return this.getAllMatchs().pipe(
-            map(matchs => this.getMatchsOfTodayHelper(matchs, date)),
+            map(matchs => this.getMatchsOfDayHelper(matchs, date)),
         )
     }
-    getUpcomingMatchs(date: Date): Observable<any>{
+     
+    getMatchsOfWeek(date: Date):Observable<any>{
         return this.getAllMatchs().pipe(
-            map(matchs => this.getUpcomingMatchsHelper(matchs, date))
+            map(matchs => this.getMatchsOfWeekHelper(matchs, date))
+        )
+    }
+    getAllPronosticsOfMatch(matchId : number){
+        return this.firebaseApi.list('matchs/'+`${matchId}`+"/pronostics").valueChanges();
+    }
+
+    getAllPronostiquedByUser(userId: string): Observable<boolean[]>{
+        return this.getAllMatchs().pipe(
+            map(matchs => this.getAllPronostiquedByUserHelper(matchs, userId))
         )
     }
 
@@ -85,15 +93,6 @@ export class MatchsService{
             winner: winner,
             userId : idUser
         })
-    }
-     
-    getAllPronosticsOfMatch(matchId : number){
-        return this.firebaseApi.list('matchs/'+`${matchId}`+"/pronostics").valueChanges();
-    }
-    getAllPronostiquedByUser(userId: string): Observable<boolean[]>{
-        return this.getAllMatchs().pipe(
-            map(matchs => this.getAllPronostiquedByUserHelper(matchs, userId))
-        )
     }
 
 
