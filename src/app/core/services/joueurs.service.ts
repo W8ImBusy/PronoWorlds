@@ -29,6 +29,10 @@ export class JoueursService{
         return this.firebaseApi.list('users').valueChanges();
     }
 
+    getUserById(userId: string):Observable<any>{
+        return this.firebaseApi.list('users/'+userId).valueChanges();
+    }
+
     getAllSortedUsers() {
         return this.getAllUsers().pipe(
             map(users => [...users].sort((a, b) => b.score - a.score)),

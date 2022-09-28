@@ -14,7 +14,7 @@ export class SingleMatchPageComponent implements OnInit {
 
   match$!: Observable<any>;
   matchId!: number;
-  scores: string[] = [];
+  ecarts: string[] = [];
   teams!: string[];
   pronoForm!: FormGroup;
   user!: any;
@@ -24,15 +24,15 @@ export class SingleMatchPageComponent implements OnInit {
     this.matchId = +this.aRoute.snapshot.params['id'];
     this.match$ = this.mService.getMatchByID(this.matchId).pipe(
       tap(match =>{
-       if (match.type == "BO5"){
-        this.scores = ["1", "2", "3"];
+       if (match.result.stage == ("knockout"||"quarter"||"semi"||"final")){
+        this.ecarts = ["1", "2", "3"];
        }
        this.teams = [match.E1,match.E2];
       })
     );
     this.pronoForm = this.formBuilder.group({
       vainqueur: ['', Validators.required],
-      score: ['']
+      ecart: ['']
     })
     this.auth.getCurrentUser().subscribe(
       user => this.user = user
@@ -40,7 +40,7 @@ export class SingleMatchPageComponent implements OnInit {
   }
   
   onSetPronostic(){
-    this.mService.setPronosticOnMatch(this.matchId, this.user.uid, this.pronoForm.controls['score'].value, this.pronoForm.controls['vainqueur'].value )
+    this.mService.setPronosticOnMatch(this.matchId, this.user.uid, this.pronoForm.controls['ecart'].value, this.pronoForm.controls['vainqueur'].value )
     this.router.navigateByUrl('matchs')
   }
 

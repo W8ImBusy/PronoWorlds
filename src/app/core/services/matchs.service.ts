@@ -2,13 +2,150 @@ import { Injectable } from "@angular/core";
 import { Observable, map, filter, tap, from, take } from "rxjs";
 import { AngularFireDatabase } from "@angular/fire/compat/database";
 import { formatDate } from "@angular/common";
+import { JoueursService } from "./joueurs.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class MatchsService{
 
-    constructor(private firebaseApi: AngularFireDatabase) {
+    playinPts : number = 2;
+    knockoutPts : number = 10;
+    groupPts : number = 5;
+    quaterPts : number = 30;
+    semiPts : number = 45;
+    finalPts : number = 60;
+
+    constructor(private firebaseApi: AngularFireDatabase, private jService:JoueursService) {
+        this.firebaseApi.database.ref('matchs').child("1").child('result').on('value', (snapshot) => {
+            var ecart;
+            var winner;
+            var correct;
+            var currentScore: number;
+            this.jService.getUserById("WLIqLgwzajaLIctwrLkqRf2gV3I2").pipe(take(1)).subscribe(
+                user => {
+                    currentScore = user[4];
+                    var ref = this.firebaseApi.database.ref('matchs').child("1").child('pronostics').child("WLIqLgwzajaLIctwrLkqRf2gV3I2");
+                    this.getOnePronosticOfUser(1, "WLIqLgwzajaLIctwrLkqRf2gV3I2").pipe(take(1)).subscribe(
+                    prono => {
+                        ecart = prono[1];
+                        winner = prono[3];
+                        correct = prono[0];
+                        console.log(winner != snapshot.val().winner)
+                        switch (snapshot.val().stage){
+                            case 'playin':{
+                                if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+this.playinPts});
+                                    ref.update({correct : 'good'});
+                                }else if (winner != snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-this.playinPts});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }
+                            case 'knockout':{
+                                if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.knockoutPts*2)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.knockoutPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner !== snapshot.val().winner && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.knockoutPts*2)});
+                                    ref.update({correct : 'wrong'});
+                                }else if (winner == snapshot.val().winner && ecart != snapshot.val().ecart && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.knockoutPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.knockoutPts)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.knockoutPts)});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }
+                            case 'group':{
+                                if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.groupPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner != snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-this.groupPts});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }
+                            case 'quarter':{
+                                if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.quaterPts*2)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.quaterPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner !== snapshot.val().winner && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.quaterPts*2)});
+                                    ref.update({correct : 'wrong'});
+                                }else if (winner == snapshot.val().winner && ecart != snapshot.val().ecart && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.quaterPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.quaterPts)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.quaterPts)});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }
+                            case 'semi':{
+                                if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.semiPts*2)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.semiPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner !== snapshot.val().winner && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.semiPts*2)});
+                                    ref.update({correct : 'wrong'});
+                                }else if (winner == snapshot.val().winner && ecart != snapshot.val().ecart && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.semiPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.semiPts)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.semiPts)});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }
+                            case 'final':{
+                                if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.finalPts*2)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'wrong'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.finalPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner !== snapshot.val().winner && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.finalPts*2)});
+                                    ref.update({correct : 'wrong'});
+                                }else if (winner == snapshot.val().winner && ecart != snapshot.val().ecart && correct == 'perfect'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.finalPts)});
+                                    ref.update({correct : 'good'});
+                                }else if (winner == snapshot.val().winner && ecart == snapshot.val().ecart && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore+(this.finalPts)});
+                                    ref.update({correct : 'perfect'});
+                                }else if (winner == snapshot.val().winner && correct == 'good'){
+                                    this.firebaseApi.database.ref('users').child("WLIqLgwzajaLIctwrLkqRf2gV3I2").update({score : currentScore-(this.finalPts)});
+                                    ref.update({correct : 'wrong'});
+                                }
+                                break;
+                            }    
+                        }
+                    }
+                )
+            });
+        })
     }
 
     getMatchsOfDayHelper(matchs : any[], date : Date): any[]{
@@ -136,27 +273,12 @@ export class MatchsService{
             map(matchs => this.getLast5MatchsHelper(matchs))
     )}
 
-    getResultOfProno(pronos: any[], userId: string, winner: string, score: string, matchType: string): string{
+    getResultOfProno(pronos: any[], userId: string, winner: string, ecart: number, matchStage: string): string{
         var result = "null";
         if (this.isPronostiquedMatchByUser(pronos, userId)){
             pronos.forEach(prono => {
                 if (prono.userId == userId){
-                    if (matchType == "BO5"){
-                        if (prono.winner == winner && prono.score == score){
-                            result = "perfect";
-                        }else if (prono.winner == winner &&  prono.score != score){
-                            result = "good";
-                        }else{
-                            result = "wrong";
-                        }
-                    }else{
-                        if (prono.winner == winner){
-                            result = "good";
-                        }else{
-                            result = "wrong";
-                        }
-
-                    }
+                    result = prono.correct;
                 }
             })
         }
@@ -167,7 +289,7 @@ export class MatchsService{
         var results: string[] = [];
         matchs.forEach(match => {
             this.getAllPronosticsOfMatch(match.id).pipe(take(1)).subscribe(
-                pronos => results.push(this.getResultOfProno(pronos, userId, match.winner, match.score, match.type)))
+                pronos => results.push(this.getResultOfProno(pronos, userId, match.result.winner, match.result.ecart, match.result.stage)))
         })
         return results;  
     }
@@ -189,14 +311,15 @@ export class MatchsService{
         )
     }
 
-    setPronosticOnMatch(idMatch: number, idUser: string, score: string, winner: string) {
-        this.firebaseApi.database.ref('matchs').child(`${idMatch}`).child('pronostics').child(idUser).set({
-            score: score,
+    getOnePronosticOfUser(matchId: number, userId: string): Observable<any>{
+        return this.firebaseApi.list('matchs/'+`${matchId}`+"/pronostics/"+userId).valueChanges();
+    }
+    setPronosticOnMatch(matchId: number, userId: string, ecart: number, winner: string) {
+        this.firebaseApi.database.ref('matchs').child(`${matchId}`).child('pronostics').child(userId).set({
+            ecart: ecart,
             winner: winner,
-            userId : idUser
+            userId : userId,
+            correct : 'wrong'
         })
     }
-
-
-
 }
