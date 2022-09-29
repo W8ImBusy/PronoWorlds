@@ -1,0 +1,39 @@
+
+<div class="form-box">
+    <h2>Connexion</h2>
+    <form [formGroup]="matchForm" (submit)="onCreateMatch()">
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom 1</mat-label>
+                <input matInput formControlName="nom1">
+            </mat-form-field> 
+            <mat-form-field appearance="fill">
+                <mat-label>Region 1</mat-label>
+                <input matInput formControlName="region1">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom 2</mat-label>
+                <input matInput formControlName="nom2">
+            </mat-form-field> 
+            <mat-form-field appearance="fill">
+                <mat-label>Region 2</mat-label>
+                <input matInput formControlName="region2">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Stage</mat-label>
+                <input matInput formControlName="stage">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Date</mat-label>
+                <input matInput formControlName="date">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Heure</mat-label>
+                <input type="number" matInput formControlName="heure">
+            </mat-form-field>
+        </div>
+        <div id="authentication-div">
+            <button mat-raised-button color="primary" [disabled]="!matchForm.valid" type="submit">Creer le match</button>
+        </div>
+    </form>
+</div> 

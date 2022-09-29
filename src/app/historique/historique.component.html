@@ -1,0 +1,14 @@
+<h1>Historique des matchs</h1>
+    <div class="all-matchs-div">
+        <div class="match-div" *ngFor="let match of endedMatchs$ | async">
+            <h2> {{match.E1.nom}} vs {{match.E2.nom}}</h2>
+            <div *ngIf="((match.result.stage == 'playin') || (match.result.stage == 'group'))">
+                <span *ngIf="(match.result.winner == match.E1.nom)"> {{match.E1.nom}} 1 - 0 {{match.E2.nom}} </span>
+                <span *ngIf="(match.result.winner == match.E2.nom)"> {{match.E1.nom}} 0 - 1 {{match.E2.nom}} </span>
+            </div>
+            <div *ngIf="((match.result.stage == 'knockout') || (match.result.stage == 'quarter') || (match.result.stage == 'semi') || (match.result.stage == 'final'))"> 
+                <span *ngIf="(match.result.winner == match.E1.nom)"> {{match.E1.nom}} 3 - {{3 - match.result.ecart}} {{match.E2.nom}} </span>
+                <span *ngIf="(match.result.winner == match.E2.nom)"> {{match.E1.nom}} {{3 - match.result.ecart}} - 3 {{match.E2.nom}} </span>
+            </div>
+        </div>   
+    </div>

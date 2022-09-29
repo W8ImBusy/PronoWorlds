@@ -24,7 +24,7 @@ export class RankingPageComponent implements OnInit {
         this.joueurs$ = joueurs;
         var index = 0;
         joueurs.forEach(joueur => {
-          this.mService.getLast5Pronos(joueur.id, this.currentDate).subscribe(
+          this.mService.getLast5PronoResultsOfUser(joueur.id, this.currentDate).subscribe(
             result => {this.last5[index] = result
             console.log(this.last5);
             index += 1;

@@ -14,27 +14,25 @@ export class MatchListPageComponent implements OnInit {
   currentMatchs$!: Observable<any>;
   tomorrowMatchs$!: Observable<any>;
   afterTomorrowMatchs$!: Observable<any>;
-  currentDate!: Date;
   tomorrowDate!: Date;
   userId!: string;
-  pronostiqued!: boolean[];
+  pronostiqued!: string[];
 
   constructor(private mService:MatchsService, private router:Router, private auth:AuthService) { }
 
   ngOnInit(): void {
-    this.currentDate = new Date();
 
     this.tomorrowDate = new Date();
-    this.tomorrowDate.setDate(this.currentDate.getDate()+1);
+    this.tomorrowDate.setDate(new Date().getDate()+1);
 
-    this.currentMatchs$ = this.mService.getMatchsOfDay(this.currentDate);
+    this.currentMatchs$ = this.mService.getMatchsOfToday();
     this.tomorrowMatchs$ = this.mService.getMatchsOfDay(this.tomorrowDate);
     this.afterTomorrowMatchs$ = this.mService.getMatchsOfWeek(this.tomorrowDate);
 
     this.auth.getCurrentUser().subscribe(
       user => {
         this.userId = user.uid;
-        this.mService.getAllPronostiquedByUser(this.userId).subscribe(
+        this.mService.getAllPronoResultsOfUser(this.userId).subscribe(
           result => this.pronostiqued = result
         )
       }

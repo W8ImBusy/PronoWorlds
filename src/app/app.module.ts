@@ -14,8 +14,10 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
 import { MatchListPageComponent } from './match-list-page/match-list-page.component';
 import { SingleMatchPageComponent } from './single-match-page/single-match-page.component';
+import { HistoriqueComponent } from './historique/historique.component';
 import { registerLocaleData } from '@angular/common';
-import localeFr from '@angular/common/locales/fr'
+import localeFr from '@angular/common/locales/fr';
+import { ManageMatchsComponent } from './manage-matchs/manage-matchs.component';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -27,6 +29,8 @@ registerLocaleData(localeFr);
     RegisterPageComponent,
     MatchListPageComponent,
     SingleMatchPageComponent,
+    HistoriqueComponent,
+    ManageMatchsComponent
   ],
   imports: [
     BrowserModule,

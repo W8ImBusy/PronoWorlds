@@ -1,0 +1,23 @@
+h1{
+    margin: 30px auto;
+    text-align: center;
+}
+
+.match-div{
+    margin: 20px auto;
+    padding: 20px 0px;
+    width: 30%;
+    box-shadow: lightgray 4px 4px 40px;  
+    text-align: center; 
+    
+}
+
+.all-matchs-div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.pronostiqued{
+    background: linear-gradient(to right, blue, white);
+}

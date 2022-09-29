@@ -13,7 +13,8 @@ export const environment = {
     messagingSenderId: "448366362482",
     appId: "1:448366362482:web:1b4a1643e174b4465fe7eb"
   },
-  signedIn: false
+  adminId : "HX0X3j2gQQQNlYZjTe6WONdacI62",
+  dbroot : 'dev'
 };
 
 /*

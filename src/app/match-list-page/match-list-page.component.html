@@ -1,25 +1,25 @@
 <div>
     <h1>Matchs d'aujourd'hui</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of currentMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1] }">
-            <h2> {{match.E1}} vs {{match.E2}}</h2>
-            <p> {{match.date}} à {{match.heure}} </p>
+        <div class="match-div" *ngFor="let match of currentMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued != null && (pronostiqued[match.id-1] === 'wrong')) }">
+            <h2> {{match.E1.nom}} vs {{match.E2.nom}}</h2>
+            <p> {{match.date}} à {{match.heure}}h </p>
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>
         </div>   
     </div>
     <h1>Matchs de demain</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of tomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1]}">
+        <div class="match-div" *ngFor="let match of tomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued != null && (pronostiqued[match.id-1] == 'wrong'))}">
             <h2> {{match.E1}} vs {{match.E2}}</h2>
-            <p> {{match.date}} à {{match.heure}} </p>
+            <p> {{match.date}} à {{match.heure}}h </p>
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>
         </div>
     </div>
     <h1>Matchs de la semaine</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of afterTomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : pronostiqued != null && pronostiqued[match.id-1]}">
+        <div class="match-div" *ngFor="let match of afterTomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued != null && (pronostiqued[match.id-1] == 'wrong'))}">
             <h2> {{match.E1}} vs {{match.E2}}</h2>
-            <p> {{match.date}} à {{match.heure}} </p>
+            <p> {{match.date}} à {{match.heure}}h </p>
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">Pronostiquer ce match</button>
         </div>
     </div>
