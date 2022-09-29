@@ -16,7 +16,7 @@ export class MatchListPageComponent implements OnInit {
   afterTomorrowMatchs$!: Observable<any>;
   tomorrowDate!: Date;
   userId!: string;
-  pronostiqued!: string[];
+  pronostiqued!: string[][];
 
   constructor(private mService:MatchsService, private router:Router, private auth:AuthService) { }
 

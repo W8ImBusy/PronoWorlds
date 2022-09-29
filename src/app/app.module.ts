@@ -18,6 +18,7 @@ import { HistoriqueComponent } from './historique/historique.component';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { ManageMatchsComponent } from './manage-matchs/manage-matchs.component';
+import { SetResultComponent } from './set-result/set-result.component';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -30,7 +31,8 @@ registerLocaleData(localeFr);
     MatchListPageComponent,
     SingleMatchPageComponent,
     HistoriqueComponent,
-    ManageMatchsComponent
+    ManageMatchsComponent,
+    SetResultComponent
   ],
   imports: [
     BrowserModule,

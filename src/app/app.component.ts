@@ -10,7 +10,7 @@ import { AuthService } from './core/services/auth.service';
 })
 export class AppComponent{
   title = 'pronoworlds';
-
+  color: string = "primary";
   signedIn : boolean = false;
   user!: any;
   adminId = environment.adminId;
@@ -20,9 +20,13 @@ export class AppComponent{
       if (user) {
         this.user = user
         this.signedIn = true;
+        if (user.uid == environment.adminId){
+          this.color = "warn";
+        }
       } else {
         this.signedIn = false;
         this.user = null;
+        this.color = "primary"
       }
     });
   }

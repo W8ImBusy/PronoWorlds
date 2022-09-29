@@ -1,13 +1,13 @@
 <div class="form-box">
     
     <h1>{{(match$ | async)?.E1.nom}} VS {{(match$ | async)?.E2.nom}}  </h1>
-    <form [formGroup]="pronoForm">
+    <form [formGroup]="matchForm">
         <div class="select-div">
             <div>    
                 <h4>Vainqueur</h4>
                 <mat-form-field appearance="fill">
                 <mat-label>Vainqueur</mat-label>
-                <mat-select formControlName="vainqueur">
+                <mat-select formControlName="winner">
                     <mat-option *ngFor="let team of teams" [value]="team">
                     {{team}}
                     </mat-option>
@@ -27,7 +27,7 @@
             </div>
         </div>
     </form>
-    <button mat-raised-button color="primary" (click)="onSetPronostic()"> Valider le pronostic </button>
+    <button mat-raised-button color="primary" (click)="onSetUpResult()"> Valider le pronostic </button>
 </div>    
 
 

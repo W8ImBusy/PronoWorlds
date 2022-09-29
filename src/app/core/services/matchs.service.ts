@@ -4,6 +4,7 @@ import { AngularFireDatabase } from "@angular/fire/compat/database";
 import { formatDate } from "@angular/common";
 import { JoueursService } from "./joueurs.service";
 import { environment } from "src/environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,53 +17,66 @@ export class MatchsService{
     quaterPts : number = 30;
     semiPts : number = 45;
     finalPts : number = 60;
+    userId!: any;
+    
 
-    constructor(private firebaseApi: AngularFireDatabase, private jService:JoueursService) {
-        this.firebaseApi.database.ref(environment.dbroot).child('matchs').child("1").child('result').on('value', (snapshot) => {
-            var ecart;
-            var winner;
-            var correct;
-            var currentScore: number;
-            this.jService.getUserById("WLIqLgwzajaLIctwrLkqRf2gV3I2").pipe(take(1)).subscribe(
-                user => {
-                    currentScore = user[4];
-                    var ref = this.firebaseApi.database.ref(environment.dbroot).child('matchs').child("1").child('pronostics').child("WLIqLgwzajaLIctwrLkqRf2gV3I2");
-                    this.getOnePronosticOfUser(1, "WLIqLgwzajaLIctwrLkqRf2gV3I2").pipe(take(1)).subscribe(
-                    prono => {
-                        ecart = prono[1];
-                        winner = prono[3];
-                        correct = prono[0];
-                        console.log(winner != snapshot.val().winner)
-                        switch (snapshot.val().stage){
-                            case 'playin':{
-                                this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.playinPts);
-                                break;
-                            }
-                            case 'knockout':{
-                                this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.playinPts);
-                                break;
-                            }
-                            case 'group':{
-                                this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.groupPts);
-                                break;
-                            }
-                            case 'quarter':{
-                                this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.quaterPts);
-                                break;
-                            }
-                            case 'semi':{
-                                this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.semiPts);
-                                break;
-                            }
-                            case 'final':{
-                                this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, currentScore, 1, "WLIqLgwzajaLIctwrLkqRf2gV3I2",this.finalPts);
-                                break;
-                            }    
-                        }
-                    }
-                )
-            });
+    constructor(private firebaseApi: AngularFireDatabase, private jService:JoueursService, private auth:AuthService) {
+        this.auth.getCurrentUser().subscribe(user => {
+            if (user){
+                this.userId = user.uid;
+            }else{
+                this.userId = '';
+            }
         })
+    }
+
+    updateScore(winner: string, ecart : number , matchId : number){
+        this.firebaseApi.database.ref(environment.dbroot).child('matchs').child(`${matchId}`).child('result').on('value', (snapshot) => {
+            this.getAllPronosticsOfMatch(matchId).pipe(take(1)).subscribe(pronos => {
+                pronos.forEach(prono => {
+                    var ecart;
+                    var winner;
+                    var correct;
+                    var currentScore: number;
+                    this.jService.getUserById(prono.userId).pipe(take(1)).subscribe(
+                        user => {
+                            currentScore = user[4];
+                            ecart = prono.ecart;
+                            winner = prono.winner;
+                            correct = prono.correct;
+                            console.log(winner + '   ' + snapshot.val().winner)
+                            switch (snapshot.val().stage){
+                                case 'playin':{
+                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, prono.userId ,this.playinPts);
+                                    break;
+                                }
+                                case 'knockout':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1,prono.userId ,this.knockoutPts);
+                                    break;
+                                }
+                                case 'group':{
+                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, prono.userId ,this.groupPts);
+                                    break;
+                                }
+                                case 'quarter':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.quaterPts);
+                                    break;
+                                }
+                                case 'semi':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.semiPts);
+                                    break;
+                                }
+                                case 'final':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.finalPts);
+                                    break;
+                                }    
+                            }
+                        }
+                    );
+                })
+            })
+        })
+        this.firebaseApi.database.ref(environment.dbroot).child('/matchs').child(`${matchId}`).child('result').update({ecart : ecart, winner : winner});
     }
 
     createMatch(nom1 : string, region1 : string, nom2 : string, region2 : string, stage : string, date : string, heure : number){
@@ -161,7 +175,7 @@ export class MatchsService{
             var pastDateFormated = match.date;
             var pastDay = +pastDateFormated.split('/',2)[0];
             var pastMonth = +pastDateFormated.split('/',2)[1];
-            if ((match.result.winner != "") && ((pastMonth == currentMonth) && (pastDay < currentDay)) || ((pastMonth == currentMonth) && (pastDay == currentDay) && (match.heure <= currentDate.getHours())) || (pastMonth < currentMonth)) {
+            if ((match.result.winner != "" || this.userId == environment.adminId) && (((pastMonth == currentMonth) && (pastDay < currentDay)) || ((pastMonth == currentMonth) && (pastDay == currentDay) && (match.heure <= currentDate.getHours())) || (pastMonth < currentMonth))) {
                 pastMatchs.push(match);
             }
         });
@@ -211,28 +225,28 @@ export class MatchsService{
             map(matchs => this.getLast5MatchsHelper(matchs))
     )}
 
-    getLast5PronoResultsOfUser(userId: string, date : Date): Observable<string[]>{
+    getLast5PronoResultsOfUser(userId: string, date : Date): Observable<string[][]>{
         return this.getLast5Matchs(date).pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
     }
 
-    getResultOfOneProno(pronos: any[], userId: string): string{
-        var result = "null";
+    getResultOfOneProno(pronos: any[], userId: string): string[]{
+        var result :string[] = [];
         pronos.forEach(prono => {
             if (prono.userId == userId){
-                result = prono.correct;
+                result = prono;
             }
         })
         return result;
     }
 
-    getAllPronosticsOfMatch(matchId : number){
+    getAllPronosticsOfMatch(matchId : number): Observable<any[]>{
         return this.firebaseApi.list(environment.dbroot+'/matchs/'+`${matchId}`+"/pronostics").valueChanges();
     }
 
-    getAllPronoResultsOfUserHelper(matchs: any[], userId: string): string[]{
-        var pronostiqued : string[] = [];
+    getAllPronoResultsOfUserHelper(matchs: any[], userId: string): string[][]{
+        var pronostiqued : string[][] = [[]];
         matchs.forEach(match =>{
             this.getAllPronosticsOfMatch(match.id).pipe(take(1)).subscribe(
                 pronos => pronostiqued.push(this.getResultOfOneProno(pronos, userId))
@@ -241,7 +255,7 @@ export class MatchsService{
         return pronostiqued;
     }
 
-    getAllPronoResultsOfUser(userId: string): Observable<string[]>{
+    getAllPronoResultsOfUser(userId: string): Observable<string[][]>{
         return this.getAllMatchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
@@ -270,26 +284,33 @@ export class MatchsService{
         }
     }
 
-    setScoreforBO5(winnerProno: string, winnerExa: string, correct: string, ecart:number, currentScore: number, matchId: number, userId: string, stagePts: number){
+    setScoreforBO5(winnerProno: string, winnerExa: string, correct: string, ecart:number, ecartExa: number, currentScore: number, matchId: number, userId: string, stagePts: number){
         var ref = this.firebaseApi.database.ref(`${environment.dbroot}`).child('matchs').child(`${matchId}`).child('pronostics').child(userId);
-        if (winnerProno == winnerExa && ecart == ecart && correct == 'wrong'){
+        if (winnerProno == winnerExa && ecart == ecartExa && correct == 'wrong'){
+            console.log('1')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore+(stagePts*2)});
             ref.update({correct : 'perfect'});
         }else if (winnerProno == winnerExa && correct == 'wrong'){
+            console.log('2')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore+(stagePts)});
             ref.update({correct : 'good'});
         }else if (winnerProno !== winnerExa && correct == 'perfect'){
+            console.log('3')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore-(stagePts*2)});
             ref.update({correct : 'wrong'});
-        }else if (winnerProno == winnerExa && ecart != ecart && correct == 'perfect'){
+        }else if (winnerProno == winnerExa && ecart != ecartExa && correct == 'perfect'){
+            console.log('4')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore-(stagePts)});
             ref.update({correct : 'good'});
-        }else if (winnerProno == winnerExa && ecart == ecart && correct == 'good'){
+        }else if (winnerProno == winnerExa && ecart == ecartExa && correct == 'good'){
+            console.log('5')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore+(stagePts)});
             ref.update({correct : 'perfect'});
         }else if (winnerProno == winnerExa && correct == 'good'){
+            console.log('6')
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore-(stagePts)});
             ref.update({correct : 'wrong'});
         }
+        console.log('1')
     }
 }

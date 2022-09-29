@@ -27,7 +27,7 @@ export class SingleMatchPageComponent implements OnInit {
        if (match.result.stage == ("knockout"||"quarter"||"semi"||"final")){
         this.ecarts = ["1", "2", "3"];
        }
-       this.teams = [match.E1,match.E2];
+       this.teams = [match.E1.nom,match.E2.nom];
       })
     );
     this.pronoForm = this.formBuilder.group({

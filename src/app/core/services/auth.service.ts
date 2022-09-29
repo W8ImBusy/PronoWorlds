@@ -16,7 +16,7 @@ export class AuthService {
             localStorage.setItem('token', 'true');
             this.router.navigateByUrl('');
         }, err => {
-            alert('Something went wrong');
+            alert(err.message);
             this.router.navigateByUrl('/login');   
         })
     }

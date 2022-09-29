@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar [color]="color">
     <button id="menu-button" mat-icon-button color="basic">
         <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
     </button>
@@ -17,10 +17,10 @@
 <mat-sidenav-container>
     <mat-sidenav #sidenav position="start" mode="push">
         <mat-nav-list>
-            <a mat-button color="primary" class="links" routerLink="profil" (click)="sidenav.close()"> Historique </a>
-            <a mat-button color="primary" class="links" routerLink="matchs" (click)="sidenav.close()"> Pronostiquer </a>
-            <a mat-button color="primary" class="links" routerLink="ranking" (click)="sidenav.close()"> Classement </a>
-            <a *ngIf="(user != null && user.uid == adminId)" mat-button color="primary" class="links" routerLink="manage" (click)="sidenav.close()"> Creer un match </a>
+            <a mat-button [color]="color" class="links" routerLink="/historique" (click)="sidenav.close()"> Historique </a>
+            <a mat-button [color]="color" class="links" routerLink="/matchs" (click)="sidenav.close()"> Pronostiquer </a>
+            <a mat-button [color]="color" class="links" routerLink="/ranking" (click)="sidenav.close()"> Classement </a>
+            <a *ngIf="(user != null && user.uid == adminId)" mat-button [color]="color" class="links" routerLink="/manage" (click)="sidenav.close()"> Creer un match </a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

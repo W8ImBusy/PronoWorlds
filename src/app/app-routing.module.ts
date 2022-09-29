@@ -8,6 +8,9 @@ import { MatchListPageComponent } from "./match-list-page/match-list-page.compon
 import { RankingPageComponent } from "./ranking-page/ranking-page.component";
 import { RegisterPageComponent } from "./register-page/register-page.component";
 import { SingleMatchPageComponent } from "./single-match-page/single-match-page.component";
+import { AuthGuard } from "./core/guards/auth.guard";
+import { AdminGuard } from "./core/guards/admin.guard";
+import { SetResultComponent } from "./set-result/set-result.component";
 
 
 const routes : Routes = [
@@ -17,9 +20,10 @@ const routes : Routes = [
     {path: 'register', component: RegisterPageComponent},
     {path: 'matchs', component:MatchListPageComponent},
     {path: 'matchs/:id', component:SingleMatchPageComponent},
-    {path: 'profil', component:HistoriqueComponent},
-    {path: 'manage', component:ManageMatchsComponent},
-    { path: '**', redirectTo: ''}
+    {path: 'historique', component:HistoriqueComponent},
+    {path: 'historique/:id', component:SetResultComponent},
+    {path: 'manage', component:ManageMatchsComponent, canActivate : [AdminGuard]},
+    {path: '**', redirectTo: ''}
     
 ];
 @NgModule({
