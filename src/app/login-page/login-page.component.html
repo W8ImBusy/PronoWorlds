@@ -5,12 +5,12 @@
             <div *ngIf="notify" class="alert alert-success">
                 {{ notify }}
             </div>
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
                 <input matInput placeholder="Faker.Le-Nul@rincé.fr" formControlName="email">
                 <mat-error>{{getEmailErrorMessage()}}</mat-error>
             </mat-form-field> 
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="outline">
                 <mat-label>Password</mat-label>
                 <input [type]="hide ? 'password' : 'text'" matInput placeholder="ABC123!" formControlName="password">
                 <button type="button" mat-icon-button matSuffix (click)="hide = !hide">

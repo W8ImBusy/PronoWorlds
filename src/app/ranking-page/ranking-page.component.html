@@ -14,14 +14,12 @@
     <ng-container matColumnDef="Pronostics">
         <th mat-header-cell *matHeaderCellDef> Derniers Pronostics </th>
         <td mat-cell *matCellDef="let joueur; let i = index"> 
-            <p *ngFor="let last5 of last5">
-                <span *ngFor="let result of last5">
-                    <mat-icon color="primary" *ngIf="result.correct == 'perfect'">done_all</mat-icon>
-                    <mat-icon color="primary" *ngIf="result.correct == 'good'"> done </mat-icon>
-                    <mat-icon color="warn" *ngIf="result.correct == 'wrong'"> clear</mat-icon>
-                    <mat-icon *ngIf="result=='null'"> remove </mat-icon>
-                </span>
-            </p>
+            <span *ngFor="let result of lasts5[i]">
+                <mat-icon color="primary" *ngIf="result.correct == 'perfect'">done_all</mat-icon>
+                <mat-icon color="primary" *ngIf="result.correct == 'good'"> done </mat-icon>
+                <mat-icon color="warn" *ngIf="result.correct == 'wrong'"> clear</mat-icon>
+                <mat-icon *ngIf="result==''"> remove </mat-icon>
+            </span>
     </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

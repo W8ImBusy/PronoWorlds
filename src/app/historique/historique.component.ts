@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatchsService } from '../core/services/matchs.service';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
 import { Router } from '@angular/router';
 
@@ -14,16 +14,16 @@ export class HistoriqueComponent implements OnInit {
   userId!: string;
   currentDate!: Date;
   endedMatchs$!: Observable<any>;
-  pronostiqued!: string[][];
+  pronostiqued: any[] = [];
   constructor(private mService: MatchsService, private auth:AuthService, private router:Router) { }
 
   ngOnInit(): void {
     this.currentDate = new Date();
     this.endedMatchs$ = this.mService.getEndedMatchs();
-    this.auth.getCurrentUser().subscribe(
+    this.auth.getCurrentUser().pipe(take(1)).subscribe(
       user => {
         this.userId = user.uid;
-        this.mService.getAllPronoResultsOfUser(this.userId).subscribe(
+        this.mService.getAllPronoResultsOfUser(this.userId).pipe(take(1)).subscribe(
           result => this.pronostiqued = result
         )
       }

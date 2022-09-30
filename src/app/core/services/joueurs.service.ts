@@ -20,13 +20,11 @@ export class JoueursService{
                         position : users.length,
                         score: 0
                 }
-
             )
-            
         })
     }
 
-    getAllUsers(): Observable<any>{
+    getAllUsers(): Observable<any[]>{
         return this.firebaseApi.list(environment.dbroot+'/users').valueChanges();
     }
 
@@ -34,7 +32,7 @@ export class JoueursService{
         return this.firebaseApi.list(environment.dbroot+'/users/'+userId).valueChanges();
     }
 
-    getAllSortedUsers() {
+    getAllSortedUsers(): Observable<any[]> {
         return this.getAllUsers().pipe(
             map(users => [...users].sort((a, b) => b.score - a.score)),
             tap(users => {
@@ -46,14 +44,15 @@ export class JoueursService{
                     } else if (users.indexOf(user) >= 1){
                         var prec = users[users.indexOf(user)-1];
                         if (prec.score == user.score){
-                            this.firebaseApi.database.ref(environment.dbroot).child('users').child(user.key).update({position: index});
+                            this.firebaseApi.database.ref(environment.dbroot).child('users').child(user.id).update({position: index});
                             sameRank += 1;
                         }else{
-                            this.firebaseApi.database.ref(environment.dbroot).child('users').child(user.key).update({position: index + sameRank});
+                            this.firebaseApi.database.ref(environment.dbroot).child('users').child(user.id).update({position: index + sameRank});
                             index += sameRank;
                             sameRank = 1;
                         }
                     }
+                console.log('index: '+ index + "; sameRank: " + sameRank )
                 })            
             })
         )

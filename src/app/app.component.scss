@@ -24,3 +24,10 @@ ul{
     margin-left: 0px;
     width:100%;
 }
+mat-sidenav-container { 
+    background: url(./../assets/background_worlds.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }

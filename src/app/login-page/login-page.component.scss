@@ -5,10 +5,15 @@
     padding: 10px 30px;
     box-shadow: lightgray 4px 4px 40px;
     text-align: center;
+    color: white;
   }
 
  mat-form-field{
   width: 100%;
+ }
+
+ mat-form-field, mat-label{
+  color : white;
  }
 
  #authentication-div{

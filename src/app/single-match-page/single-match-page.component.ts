@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, tap, map } from 'rxjs';
+import { Observable, tap, take } from 'rxjs';
 import { MatchsService } from '../core/services/matchs.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../core/services/auth.service';
@@ -24,7 +24,7 @@ export class SingleMatchPageComponent implements OnInit {
     this.matchId = +this.aRoute.snapshot.params['id'];
     this.match$ = this.mService.getMatchByID(this.matchId).pipe(
       tap(match =>{
-       if (match.result.stage == ("knockout"||"quarter"||"semi"||"final")){
+       if (match.result.stage == ("k"||"q"||"s"||"f")){
         this.ecarts = ["1", "2", "3"];
        }
        this.teams = [match.E1.nom,match.E2.nom];
@@ -34,7 +34,7 @@ export class SingleMatchPageComponent implements OnInit {
       vainqueur: ['', Validators.required],
       ecart: ['']
     })
-    this.auth.getCurrentUser().subscribe(
+    this.auth.getCurrentUser().pipe(take(1)).subscribe(
       user => this.user = user
     )
   }

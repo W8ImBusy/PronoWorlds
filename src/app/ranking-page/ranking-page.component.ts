@@ -11,25 +11,22 @@ import { MatchsService } from '../core/services/matchs.service';
 })
 export class RankingPageComponent implements OnInit {
 
-  currentDate !: Date;
   joueurs$ !: any[];
-  last5: any[][] = [[]];
+  lasts5: any[] = [];
   displayedColumns: string[] = ["Position", "Name", "Score", "Pronostics"];
   constructor(public jService : JoueursService, private mService:MatchsService) {}
 
   ngOnInit(): void {
-    this.currentDate = new Date();
-    this.jService.getAllSortedUsers().subscribe(
+    this.jService.getAllSortedUsers().pipe(take(1)).subscribe(
       joueurs => {
         this.joueurs$ = joueurs;
         var index = 0;
-        joueurs.forEach(joueur => {
-          this.mService.getLast5PronoResultsOfUser(joueur.id, this.currentDate).subscribe(
-            result => {this.last5[index] = result
-            console.log(this.last5);
-            index += 1;
+        joueurs.slice().reverse().forEach(joueur => {
+          this.mService.getLast5PronoResultsOfUser(joueur.id).pipe(take(1)).subscribe(
+            result => {
+              this.lasts5[index] = result;
+              index += 1;
             })
-          
         })
     }
   )

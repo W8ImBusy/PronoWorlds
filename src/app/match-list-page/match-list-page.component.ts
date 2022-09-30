@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable, from, take } from 'rxjs';
 import { MatchsService } from '../core/services/matchs.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
@@ -16,7 +16,7 @@ export class MatchListPageComponent implements OnInit {
   afterTomorrowMatchs$!: Observable<any>;
   tomorrowDate!: Date;
   userId!: string;
-  pronostiqued!: string[][];
+  pronostiqued: any[] = [];
 
   constructor(private mService:MatchsService, private router:Router, private auth:AuthService) { }
 
@@ -29,12 +29,12 @@ export class MatchListPageComponent implements OnInit {
     this.tomorrowMatchs$ = this.mService.getMatchsOfDay(this.tomorrowDate);
     this.afterTomorrowMatchs$ = this.mService.getMatchsOfWeek(this.tomorrowDate);
 
-    this.auth.getCurrentUser().subscribe(
+    this.auth.getCurrentUser().pipe(take(1)).pipe(take(1)).subscribe(
       user => {
-        this.userId = user.uid;
-        this.mService.getAllPronoResultsOfUser(this.userId).subscribe(
-          result => this.pronostiqued = result
-        )
+        this.userId = user?.uid;
+        this.mService.getAllPronoResultsOfUser(this.userId).pipe(take(1)).subscribe(
+          result => {this.pronostiqued = result
+          })
       }
     );
     

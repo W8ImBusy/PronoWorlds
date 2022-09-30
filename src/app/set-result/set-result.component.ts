@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { MatchsService } from '../core/services/matchs.service';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, take } from 'rxjs';
 
 @Component({
   selector: 'app-set-result',
@@ -27,14 +27,14 @@ export class SetResultComponent implements OnInit {
     });
     this.match$ = this.mService.getMatchByID(this.matchId).pipe(
       tap(match =>{
-       if (match.result.stage == ("knockout"||"quarter"||"semi"||"final")){
+       if (match.result.stage == ("k"||"q"||"s"||"f")){
         this.ecarts = ["1", "2", "3"];
        }
        this.teams = [match.E1.nom,match.E2.nom];
       })
     );
 
-    this.auth.getCurrentUser().subscribe(
+    this.auth.getCurrentUser().pipe(take(1)).subscribe(
       user => {
         this.userId = user.uid;
       }

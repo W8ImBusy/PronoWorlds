@@ -5,7 +5,7 @@
         <div class="select-div">
             <div>    
                 <h4>Vainqueur</h4>
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="outline">
                 <mat-label>Vainqueur</mat-label>
                 <mat-select formControlName="vainqueur">
                     <mat-option *ngFor="let team of teams" [value]="team">
@@ -16,7 +16,7 @@
             </div>
             <div *ngIf="ecarts.length !== 0">
                 <h4>Ecart au score</h4>
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="outline">
                     <mat-label>Ecart au score</mat-label>
                     <mat-select formControlName="ecart">
                         <mat-option *ngFor="let ecart of ecarts" [value]="ecart">

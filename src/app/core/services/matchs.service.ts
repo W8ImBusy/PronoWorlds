@@ -44,30 +44,29 @@ export class MatchsService{
                             ecart = prono.ecart;
                             winner = prono.winner;
                             correct = prono.correct;
-                            console.log(winner + '   ' + snapshot.val().winner)
                             switch (snapshot.val().stage){
-                                case 'playin':{
-                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, prono.userId ,this.playinPts);
+                                case 'p':{
+                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, matchId, prono.userId ,this.playinPts);
                                     break;
                                 }
-                                case 'knockout':{
-                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1,prono.userId ,this.knockoutPts);
+                                case 'k':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, matchId ,prono.userId ,this.knockoutPts);
                                     break;
                                 }
-                                case 'group':{
-                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, 1, prono.userId ,this.groupPts);
+                                case 'g':{
+                                    this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, matchId, prono.userId ,this.groupPts);
                                     break;
                                 }
-                                case 'quarter':{
-                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.quaterPts);
+                                case 'q':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, matchId, prono.userId ,this.quaterPts);
                                     break;
                                 }
-                                case 'semi':{
-                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.semiPts);
+                                case 's':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, matchId, prono.userId ,this.semiPts);
                                     break;
                                 }
-                                case 'final':{
-                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, 1, prono.userId ,this.finalPts);
+                                case 'f':{
+                                    this.setScoreforBO5(winner, snapshot.val().winner, correct, ecart, snapshot.val().ecart, currentScore, matchId, prono.userId ,this.finalPts);
                                     break;
                                 }    
                             }
@@ -152,7 +151,11 @@ export class MatchsService{
             var upcomingMonth = +upcomingDateFormated.split('/',2)[1];
             var currentDay = +currentDateFormated.split('/',2)[0];
             var currentMonth = +currentDateFormated.split('/',2)[1];
-            if (((upcomingMonth = currentMonth) && (upcomingDay > currentDay)) || (upcomingMonth > currentMonth)) {
+            console.log(upcomingDay)
+            console.log(currentDay )
+            console.log(upcomingMonth)
+            console.log(currentMonth)
+            if (((upcomingMonth == currentMonth) && (upcomingDay > currentDay)) || (upcomingMonth > currentMonth)) {
                 matchsUpcoming.push(match);
             }
         });
@@ -175,7 +178,7 @@ export class MatchsService{
             var pastDateFormated = match.date;
             var pastDay = +pastDateFormated.split('/',2)[0];
             var pastMonth = +pastDateFormated.split('/',2)[1];
-            if ((match.result.winner != "" || this.userId == environment.adminId) && (((pastMonth == currentMonth) && (pastDay < currentDay)) || ((pastMonth == currentMonth) && (pastDay == currentDay) && (match.heure <= currentDate.getHours())) || (pastMonth < currentMonth))) {
+            if (((match.result.winner != "") || (this.userId == environment.adminId)) && (((pastMonth == currentMonth) && (pastDay < currentDay)) || ((pastMonth == currentMonth) && (pastDay == currentDay) && (match.heure <= currentDate.getHours())) || (pastMonth < currentMonth))) {
                 pastMatchs.push(match);
             }
         });
@@ -220,13 +223,13 @@ export class MatchsService{
         
     }
 
-    getLast5Matchs(date: Date): Observable<any>{
+    getLast5Matchs(): Observable<any>{
         return this.getEndedMatchs().pipe(
             map(matchs => this.getLast5MatchsHelper(matchs))
     )}
 
-    getLast5PronoResultsOfUser(userId: string, date : Date): Observable<string[][]>{
-        return this.getLast5Matchs(date).pipe(
+    getLast5PronoResultsOfUser(userId: string): Observable<any[]>{
+        return this.getLast5Matchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
     }
@@ -245,8 +248,8 @@ export class MatchsService{
         return this.firebaseApi.list(environment.dbroot+'/matchs/'+`${matchId}`+"/pronostics").valueChanges();
     }
 
-    getAllPronoResultsOfUserHelper(matchs: any[], userId: string): string[][]{
-        var pronostiqued : string[][] = [[]];
+    getAllPronoResultsOfUserHelper(matchs: any[], userId: string): any[]{
+        var pronostiqued : any[] = [];
         matchs.forEach(match =>{
             this.getAllPronosticsOfMatch(match.id).pipe(take(1)).subscribe(
                 pronos => pronostiqued.push(this.getResultOfOneProno(pronos, userId))
@@ -255,7 +258,7 @@ export class MatchsService{
         return pronostiqued;
     }
 
-    getAllPronoResultsOfUser(userId: string): Observable<string[][]>{
+    getAllPronoResultsOfUser(userId: string): Observable<any[]>{
         return this.getAllMatchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
