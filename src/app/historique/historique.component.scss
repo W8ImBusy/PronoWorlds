@@ -18,8 +18,28 @@ h1{
     justify-content: space-evenly;
 }
 
-.pronostiqued{
-    background: linear-gradient(to right, blue, white);
+.perfect{
+    background: linear-gradient(to bottom, green, white);
+    color: black;
+    & >div{
+        color: black;
+    }
+}
+
+.good{
+    background: linear-gradient(to bottom, greenyellow, white);
+    color: black;
+    & >div{
+        color: black;
+    }
+}
+
+.wrong{
+    background: linear-gradient(to bottom, darkred, white);
+    color: black;
+    & >div{
+        color: black;
+    }
 }
 
 div{

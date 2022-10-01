@@ -191,51 +191,50 @@ export class MatchsService{
         )
     }
 
-    getLast5MatchsHelper(matchs : any[]): any[]{
-        var results: any[];
-        switch(matchs.length) {
-            case 0:{
-                results = [];
-                break;
+    getNotEndedMatchsHelper(matchs: any[]): any[]{
+        var futureMatchs: any[] = [];
+        var currentDate = new Date();
+        var currentDateFormated = formatDate(currentDate, 'dd/MM', 'fr');
+        var currentDay = +currentDateFormated.split('/',2)[0];
+        var currentMonth = +currentDateFormated.split('/',2)[1];
+        matchs.forEach(match => {
+            var futureDateFormated = match.date;
+            var futureDay = +futureDateFormated.split('/',2)[0];
+            var futureMonth = +futureDateFormated.split('/',2)[1];
+            if (((futureMonth == currentMonth) && (futureDay > currentDay)) || ((futureMonth == currentMonth) && (futureDay == currentDay) && (match.heure > currentDate.getHours())) || (futureMonth > currentMonth)) {
+                futureMatchs.push(match);
             }
-            case 1:{
-                results = [matchs[0]];
-                break;
-            }
-            case 2:{
-                results = [matchs[0], matchs[1]];
-                break;
-            }
-            case 3:{
-                results = [matchs[0], matchs[1], matchs[2]];
-                break;
-            }
-            case 4:{
-                results = [matchs[0], matchs[1], matchs[2], matchs[3]];
-                break;
-            }
-            default:{
-                results = [matchs[matchs.length-4],matchs[matchs.length-3],matchs[matchs.length-2],matchs[matchs.length-1],matchs[matchs.length]];
-                break;
-            }
-        }
-        return results;
-        
+        });
+        return futureMatchs;
+    }
+   
+    getNotEndedMatchs():Observable<any>{
+        return this.getAllMatchs().pipe(
+            map(matchs => this.getNotEndedMatchsHelper(matchs))
+        )
     }
 
-    getLast5Matchs(): Observable<any>{
+    getLast8MatchsHelper(matchs : any[]): any[]{
+        if (matchs.length < 8) {
+                return matchs;
+        }else{
+                return [matchs[matchs.length-8],matchs[matchs.length-7],matchs[matchs.length-6],matchs[matchs.length-5],matchs[matchs.length-4],matchs[matchs.length-3],matchs[matchs.length-2],matchs[matchs.length-1]];
+        }
+    }
+
+    getLast8Matchs(): Observable<any>{
         return this.getEndedMatchs().pipe(
-            map(matchs => this.getLast5MatchsHelper(matchs))
+            map(matchs => this.getLast8MatchsHelper(matchs))
     )}
 
-    getLast5PronoResultsOfUser(userId: string): Observable<any[]>{
-        return this.getLast5Matchs().pipe(
+    getLast8PronoResultsOfUser(userId: string): Observable<any[]>{
+        return this.getLast8Matchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
     }
 
-    getResultOfOneProno(pronos: any[], userId: string): string[]{
-        var result :string[] = [];
+    getResultOfOneProno(pronos: any[], userId: string): any{
+        var result :any ;
         pronos.forEach(prono => {
             if (prono.userId == userId){
                 result = prono;
@@ -251,13 +250,24 @@ export class MatchsService{
     getAllPronoResultsOfUserHelper(matchs: any[], userId: string): any[]{
         var pronostiqued : any[] = [];
         matchs.forEach(match =>{
-            this.getAllPronosticsOfMatch(match.id).pipe(take(1)).subscribe(
-                pronos => pronostiqued.push(this.getResultOfOneProno(pronos, userId))
-            )
+            const myVar = userId;
+            type ObjectKey = keyof typeof match.pronostics;
+            pronostiqued.push(match.pronostics[myVar as ObjectKey])
+            console.log(match.pronostics[myVar as ObjectKey])
         });
         return pronostiqued;
     }
 
+    getAllEndedPronoResultsOfUser(userId: string): Observable<any[]>{
+        return this.getEndedMatchs().pipe(
+            map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
+        )
+    }
+    getAllNotEndedPronoResultsOfUser(userId: string): Observable<any[]>{
+        return this.getNotEndedMatchs().pipe(
+            map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
+        )
+    }
     getAllPronoResultsOfUser(userId: string): Observable<any[]>{
         return this.getAllMatchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))

@@ -11,6 +11,9 @@ import { MatchsService } from '../core/services/matchs.service';
 export class ManageMatchsComponent implements OnInit {
 
   matchForm!: FormGroup;
+  noms: string[] = ['Fnatic','Beyond Gaming', 'Evil Geniuses', 'LOUD', 'The Chiefs','DetonatioN FocusMe','MAD Lions', 'Saigon Buffalo', 'DRX', 'Royal Never Give Up', 'Istanbul Wildcats', 'Isurus'];
+  regions: string[] = ['Europe', 'Taïwan','Amérique du Nord', 'Brésil', 'Océanie', 'Japon', 'Vietnam', 'Corée', 'Chine', 'Turquie', 'Amérique Latine'];
+  stages: string[] = ['p','k','g','q','s','f'];
   constructor(private formBuilder : FormBuilder, private mService : MatchsService, private router:Router) { }
 
   ngOnInit(): void {

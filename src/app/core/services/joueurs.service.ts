@@ -52,7 +52,6 @@ export class JoueursService{
                             sameRank = 1;
                         }
                     }
-                console.log('index: '+ index + "; sameRank: " + sameRank )
                 })            
             })
         )

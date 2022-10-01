@@ -12,7 +12,7 @@ import { MatchsService } from '../core/services/matchs.service';
 export class RankingPageComponent implements OnInit {
 
   joueurs$ !: any[];
-  lasts5: any[] = [];
+  lasts8: any[] = [];
   displayedColumns: string[] = ["Position", "Name", "Score", "Pronostics"];
   constructor(public jService : JoueursService, private mService:MatchsService) {}
 
@@ -20,14 +20,13 @@ export class RankingPageComponent implements OnInit {
     this.jService.getAllSortedUsers().pipe(take(1)).subscribe(
       joueurs => {
         this.joueurs$ = joueurs;
-        var index = 0;
         joueurs.slice().reverse().forEach(joueur => {
-          this.mService.getLast5PronoResultsOfUser(joueur.id).pipe(take(1)).subscribe(
+          this.mService.getLast8PronoResultsOfUser(joueur.id).pipe(take(1)).subscribe(
             result => {
-              this.lasts5[index] = result;
-              index += 1;
+              this.lasts8.push(result);
             })
         })
+        console.log(this.lasts8)
     }
   )
 }

@@ -1,27 +1,47 @@
 
 <div class="form-box">
-    <h2>Connexion</h2>
+    <h2>Créer un match</h2>
     <form [formGroup]="matchForm" (submit)="onCreateMatch()">
         <div>
             <mat-form-field appearance="fill">
                 <mat-label>Nom 1</mat-label>
-                <input matInput formControlName="nom1">
+                <mat-select formControlName="nom1">
+                    <mat-option *ngFor="let nom of noms" [value]="nom">
+                    {{nom}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field> 
             <mat-form-field appearance="fill">
                 <mat-label>Region 1</mat-label>
-                <input matInput formControlName="region1">
+                <mat-select formControlName="region1">
+                    <mat-option *ngFor="let region of regions" [value]="region">
+                    {{region}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Nom 2</mat-label>
-                <input matInput formControlName="nom2">
+                <mat-select formControlName="nom2">
+                    <mat-option *ngFor="let nom of noms" [value]="nom">
+                    {{nom}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field> 
             <mat-form-field appearance="fill">
                 <mat-label>Region 2</mat-label>
-                <input matInput formControlName="region2">
+                <mat-select formControlName="region2">
+                    <mat-option *ngFor="let region of regions" [value]="region">
+                    {{region}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Stage</mat-label>
-                <input matInput formControlName="stage">
+                <mat-select formControlName="stage">
+                    <mat-option *ngFor="let stage of stages" [value]="stage">
+                    {{stage}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Date</mat-label>

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { MatchsService } from '../core/services/matchs.service';
 import { Observable, tap, take } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-set-result',
@@ -17,7 +18,7 @@ export class SetResultComponent implements OnInit {
   matchId !: number;
   ecarts: string[] = [];
   teams!: string[];
-  constructor(private auth:AuthService, private mService:MatchsService, private formBuilder : FormBuilder, private aRoute: ActivatedRoute) { }
+  constructor(private auth:AuthService, private mService:MatchsService, private formBuilder : FormBuilder, private aRoute: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.matchId = +this.aRoute.snapshot.params['id'];
@@ -42,6 +43,7 @@ export class SetResultComponent implements OnInit {
   }
 
   onSetUpResult(){
-    this.mService.updateScore(this.matchForm.controls['winner'].value, this.matchForm.controls['ecart'].value, this.matchId)
+    this.mService.updateScore(this.matchForm.controls['winner'].value, this.matchForm.controls['ecart'].value, this.matchId);
+    this.router.navigateByUrl('historique');
   }
 }

@@ -1,29 +1,29 @@
 <div>
     <h1>Historique des matchs</h1>
     <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of endedMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued != null && (pronostiqued[match.id-1].correct === 'wrong')) }">
-            <h3>({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3>
+        <div class="match-div" *ngFor="let match of endedMatchs$ | async" [ngClass]="{'perfect' : (pronos[match.id-1] != null && pronos[match.id-1].correct == 'perfect'), 'good' : (pronos[match.id-1] != null && pronos[match.id-1].correct == 'good'), 'wrong' : (pronos[match.id-1] != null && pronos[match.id-1].correct == 'wrong')}">
+            <h3>({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3> 
             <div *ngIf="((match.result.stage == 'p') || (match.result.stage == 'g'))">
                 <span *ngIf="(match.result.winner == match.E1.nom)">
-                    {{match.E1.nom}} 1 - 0 {{match.E2.nom}} 
-                    <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart == ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}}</p>
+                    Resultat : {{match.E1.nom}} 1 - 0 {{match.E2.nom}} 
+                    <p *ngIf="(pronos[match.id-1] != null && (pronos[match.id-1].ecart == ''))"> Mon Pronostic : {{pronos[match.id-1].winner}}</p>
                 </span>
                 <span *ngIf="(match.result.winner == match.E2.nom)">
-                     {{match.E1.nom}} 0 - 1 {{match.E2.nom}}
-                    <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart == ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}}</p>
+                     Resultat : {{match.E1.nom}} 0 - 1 {{match.E2.nom}}
+                    <p *ngIf="(pronos[match.id-1] != null && (pronos[match.id-1].ecart == ''))"> Mon Pronostic : {{pronos[match.id-1].winner}}</p>
                 </span> 
             </div>
             <div *ngIf="((match.result.stage == 'k') || (match.result.stage == 'q') || (match.result.stage == 's') || (match.result.stage == 'f'))"> 
                 <span *ngIf="(match.result.winner == match.E1.nom)">
-                    {{match.E1.nom}} 3 - {{3 - match.result.ecart}} {{match.E2.nom}}
-                    <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart != ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}} avec {{pronostiqued[match.id-1].ecart}} games d'écart</p>
+                    Resultat : {{match.E1.nom}} 3 - {{3 - match.result.ecart}} {{match.E2.nom}}
+                    <p *ngIf="(pronos[match.id-1] != null && (pronos[match.id-1].ecart != ''))"> Mon Pronostic : {{pronos[match.id-1].winner}} avec {{pronos[match.id-1].ecart}} games d'écart</p>
                 </span>
                 <span *ngIf="(match.result.winner == match.E2.nom)">
-                    {{match.E1.nom}} {{3 - match.result.ecart}} - 3 {{match.E2.nom}}
-                    <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart != ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}} avec {{pronostiqued[match.id-1].ecart}} games d'écart</p>
+                    Resultat : {{match.E1.nom}} {{3 - match.result.ecart}} - 3 {{match.E2.nom}}
+                    <p *ngIf="(pronos[match.id-1] != null && (pronos[match.id-1].ecart != ''))"> Mon Pronostic : {{pronos[match.id-1].winner}} avec {{pronos[match.id-1].ecart}} games d'écart</p>
                 </span>
             </div>
-            <button mat-raised-button color="primary" (click)="onSetUpResult(match.id)"> Renseigner le résultat</button>
+            <button *ngIf="userId == adminId" mat-raised-button color="primary" (click)="onSetUpResult(match.id)"> Renseigner le résultat</button>
         </div>   
     </div>
 </div>

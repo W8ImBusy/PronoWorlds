@@ -20,7 +20,7 @@ const routes : Routes = [
     {path: 'register', component: RegisterPageComponent},
     {path: 'matchs', component:MatchListPageComponent},
     {path: 'matchs/:id', component:SingleMatchPageComponent, canActivate : [AuthGuard]},
-    {path: 'historique', component:HistoriqueComponent, canActivate : [AuthGuard]},
+    {path: 'historique', component:HistoriqueComponent},
     {path: 'historique/:id', component:SetResultComponent, canActivate : [AdminGuard]},
     {path: 'manage', component:ManageMatchsComponent, canActivate : [AdminGuard]},
     {path: '**', redirectTo: ''}

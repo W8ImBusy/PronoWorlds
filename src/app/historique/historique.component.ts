@@ -3,6 +3,7 @@ import { MatchsService } from '../core/services/matchs.service';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-historique',
@@ -12,9 +13,10 @@ import { Router } from '@angular/router';
 export class HistoriqueComponent implements OnInit {
 
   userId!: string;
+  adminId!: string;
   currentDate!: Date;
   endedMatchs$!: Observable<any>;
-  pronostiqued: any[] = [];
+  pronos: any[] = [];
   constructor(private mService: MatchsService, private auth:AuthService, private router:Router) { }
 
   ngOnInit(): void {
@@ -23,11 +25,12 @@ export class HistoriqueComponent implements OnInit {
     this.auth.getCurrentUser().pipe(take(1)).subscribe(
       user => {
         this.userId = user.uid;
-        this.mService.getAllPronoResultsOfUser(this.userId).pipe(take(1)).subscribe(
-          result => this.pronostiqued = result
-        )
+        this.mService.getAllEndedPronoResultsOfUser(this.userId).pipe(take(1)).subscribe(
+          result => {this.pronos = result
+          })
       }
     );
+    this.adminId = environment.adminId;
   }
   
   onSetUpResult(matchId: number){
