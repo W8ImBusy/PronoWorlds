@@ -30,20 +30,22 @@ export class MatchsService{
         })
     }
 
+    changeDay(){
+        if(this.userId == environment.adminId){
+            environment.currentDay += 1;
+        }
+    }
+
     updateScore(winner: string, ecart : number , matchId : number){
         this.firebaseApi.database.ref(environment.dbroot).child('matchs').child(`${matchId}`).child('result').on('value', (snapshot) => {
             this.getAllPronosticsOfMatch(matchId).pipe(take(1)).subscribe(pronos => {
-                pronos.forEach(prono => {
-                    var ecart;
-                    var winner;
-                    var correct;
-                    var currentScore: number;
+                pronos.forEach(prono => {;
                     this.jService.getUserById(prono.userId).pipe(take(1)).subscribe(
                         user => {
-                            currentScore = user[4];
-                            ecart = prono.ecart;
-                            winner = prono.winner;
-                            correct = prono.correct;
+                             var currentScore = user[4];
+                             var ecart = prono.ecart;
+                             var winner = prono.winner;
+                             var correct = prono.correct;
                             switch (snapshot.val().stage){
                                 case 'p':{
                                     this.setScoreforBO1(winner, snapshot.val().winner, correct, currentScore, matchId, prono.userId ,this.playinPts);
@@ -78,7 +80,7 @@ export class MatchsService{
         this.firebaseApi.database.ref(environment.dbroot).child('/matchs').child(`${matchId}`).child('result').update({ecart : ecart, winner : winner});
     }
 
-    createMatch(nom1 : string, region1 : string, nom2 : string, region2 : string, stage : string, date : string, heure : number){
+    createMatch(nom1 : string, region1 : string, nom2 : string, region2 : string, stage : string, date : string, heure : number, day : number){
         this.getNumberOfMatchs().pipe(take(1)).subscribe(
             length => {
                 this.firebaseApi.database.ref(environment.dbroot).child('matchs').child(`${length+1}`).set({
@@ -87,6 +89,7 @@ export class MatchsService{
                     id : length+1,
                     date : date,
                     heure : heure,
+                    day : day,
                     result : {stage : stage, ecart : 0, winner : ""}
                 })
             }
@@ -136,6 +139,32 @@ export class MatchsService{
         return matchsDay;
     }
 
+    getMatchsOfDayGHelper(matchs : any[], day : number): any[]{
+        var matchsOfDay : any[] = [];
+        matchs.forEach(match => {
+            if (match.day == day){
+                matchsOfDay.push(match)
+            }
+        })
+        return this.getFutureMatchsHelper(matchsOfDay)
+    }
+
+    getMatchsOfLastDayHelper(matchs : any[], day : number): any[]{
+        var matchsOfDay : any[] = [];
+        matchs.forEach(match => {
+            if (match.day == day){
+                matchsOfDay.push(match)
+            }
+        })
+        return matchsOfDay;
+    }
+
+    getMatchsOfDayG(day:number) : Observable<any>{
+        return this.getAllMatchs().pipe(
+            map(matchs => this.getMatchsOfDayGHelper(matchs, day))
+        )
+    }
+
     getMatchsOfDay(date: Date): Observable<any>{
         return this.getAllMatchs().pipe(
             map(matchs => this.getMatchsOfDayHelper(matchs, date))
@@ -151,11 +180,23 @@ export class MatchsService{
             var upcomingMonth = +upcomingDateFormated.split('/',2)[1];
             var currentDay = +currentDateFormated.split('/',2)[0];
             var currentMonth = +currentDateFormated.split('/',2)[1];
-            console.log(upcomingDay)
-            console.log(currentDay )
-            console.log(upcomingMonth)
-            console.log(currentMonth)
             if (((upcomingMonth == currentMonth) && (upcomingDay > currentDay)) || (upcomingMonth > currentMonth)) {
+                matchsUpcoming.push(match);
+            }
+        });
+        return matchsUpcoming;
+    }
+
+    getFutureMatchsHelper(matchs: any[]): any[]{
+        var matchsUpcoming: any[] = [];
+        matchs.forEach(match => {
+            var currentDateFormated = formatDate(new Date(), 'dd/MM', 'fr');
+            var upcomingDateFormated = match.date;
+            var upcomingDay = +upcomingDateFormated.split('/',2)[0];
+            var upcomingMonth = +upcomingDateFormated.split('/',2)[1];
+            var currentDay = +currentDateFormated.split('/',2)[0];
+            var currentMonth = +currentDateFormated.split('/',2)[1];
+            if (((upcomingMonth == currentMonth) && (upcomingDay > currentDay)) || (upcomingMonth > currentMonth) || ((upcomingMonth == currentMonth) && (upcomingDay == currentDay) && (match.heure> new Date().getHours()))) {
                 matchsUpcoming.push(match);
             }
         });
@@ -214,21 +255,14 @@ export class MatchsService{
         )
     }
 
-    getLast8MatchsHelper(matchs : any[]): any[]{
-        if (matchs.length < 8) {
-                return matchs;
-        }else{
-                return [matchs[matchs.length-8],matchs[matchs.length-7],matchs[matchs.length-6],matchs[matchs.length-5],matchs[matchs.length-4],matchs[matchs.length-3],matchs[matchs.length-2],matchs[matchs.length-1]];
-        }
+    getLastDayMatchs(): Observable<any>{
+        return this.getEndedMatchs().pipe(
+            map(matchs => this.getMatchsOfLastDayHelper(matchs, environment.currentDay - 1))
+        )
     }
 
-    getLast8Matchs(): Observable<any>{
-        return this.getEndedMatchs().pipe(
-            map(matchs => this.getLast8MatchsHelper(matchs))
-    )}
-
-    getLast8PronoResultsOfUser(userId: string): Observable<any[]>{
-        return this.getLast8Matchs().pipe(
+    getLastDayPronoResultsOfUser(userId: string): Observable<any[]>{
+        return this.getLastDayMatchs().pipe(
             map(matchs => this.getAllPronoResultsOfUserHelper(matchs, userId))
         )
     }
@@ -252,8 +286,11 @@ export class MatchsService{
         matchs.forEach(match =>{
             const myVar = userId;
             type ObjectKey = keyof typeof match.pronostics;
-            pronostiqued.push(match.pronostics[myVar as ObjectKey])
-            console.log(match.pronostics[myVar as ObjectKey])
+            if (typeof match.pronostics !== 'undefined' && typeof match.pronostics[myVar as ObjectKey] !== 'undefined'){
+                pronostiqued.push(match.pronostics[myVar as ObjectKey])
+            }else{
+                pronostiqued.push(['null'])
+            }
         });
         return pronostiqued;
     }
@@ -278,12 +315,25 @@ export class MatchsService{
         return this.firebaseApi.list(environment.dbroot+'/matchs/'+`${matchId}`+"/pronostics/"+userId).valueChanges();
     }
     setPronosticOnMatch(matchId: number, userId: string, ecart: number, winner: string) {
-        this.firebaseApi.database.ref(environment.dbroot).child('matchs').child(`${matchId}`).child('pronostics').child(userId).set({
-            ecart: ecart,
-            winner: winner,
-            userId : userId,
-            correct : 'wrong'
-        })
+        this.getMatchByID(matchId).subscribe(
+            match => {
+                var currentDate = new Date();
+                var currentDay = +currentDate.getDate();
+                var currentMonth = +currentDate.getMonth();
+                var currentHours = +currentDate.getHours();
+                var matchDay = +match.date.split('/',2)[0];
+                var matchMonth = +match.date.split('/',2)[1];
+                if ((matchMonth > currentMonth) || (matchMonth == currentMonth &&  matchDay > currentDay) || (matchMonth == currentMonth &&  matchDay == currentDay && match.heure > currentHours)){
+                    this.firebaseApi.database.ref(environment.dbroot).child('matchs').child(`${matchId}`).child('pronostics').child(userId).set({
+                        ecart: ecart,
+                        winner: winner,
+                        userId : userId,
+                        correct : 'wrong'
+                    })
+                }
+            }
+        )
+        
     }
 
     setScoreforBO1(winnerProno: string, winnerExa: string, correct: string, currentScore: number, matchId: number, userId: string, stagePts: number){
@@ -324,6 +374,5 @@ export class MatchsService{
             this.firebaseApi.database.ref(environment.dbroot).child('users').child(userId).update({score : currentScore-(stagePts)});
             ref.update({correct : 'wrong'});
         }
-        console.log('1')
     }
 }

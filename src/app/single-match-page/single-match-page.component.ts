@@ -24,7 +24,7 @@ export class SingleMatchPageComponent implements OnInit {
     this.matchId = +this.aRoute.snapshot.params['id'];
     this.match$ = this.mService.getMatchByID(this.matchId).pipe(
       tap(match =>{
-       if (match.result.stage == ("k"||"q"||"s"||"f")){
+       if (match.result.stage == "k" || match.result.stage == "q" || match.result.stage == "s" || match.result.stage == "f"){
         this.ecarts = ["1", "2", "3"];
        }
        this.teams = [match.E1.nom,match.E2.nom];
@@ -32,7 +32,7 @@ export class SingleMatchPageComponent implements OnInit {
     );
     this.pronoForm = this.formBuilder.group({
       vainqueur: ['', Validators.required],
-      ecart: ['']
+      ecart: ['', Validators.required]
     })
     this.auth.getCurrentUser().pipe(take(1)).subscribe(
       user => this.user = user

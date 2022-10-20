@@ -26,10 +26,11 @@ export class HistoriqueComponent implements OnInit {
       user => {
         this.userId = user.uid;
         this.mService.getAllEndedPronoResultsOfUser(this.userId).pipe(take(1)).subscribe(
-          result => {this.pronos = result
+          result => {this.pronos = result;
           })
       }
     );
+    
     this.adminId = environment.adminId;
   }
   

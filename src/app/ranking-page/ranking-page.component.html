@@ -12,15 +12,15 @@
         <td mat-cell *matCellDef="let joueur"> <span [ngClass]="{'first' : joueur.position == 1, 'second': joueur.position == 2, 'third' : joueur.position == 3 }">{{joueur.score}}</span></td>
     </ng-container>
     <ng-container matColumnDef="Pronostics">
-        <th mat-header-cell *matHeaderCellDef> Derniers Pronostics </th>
+        <th mat-header-cell *matHeaderCellDef> Pronostics de la journée précédente </th>
         <td mat-cell *matCellDef="let joueur; let i = index"> 
             <span *ngFor="let result of lasts8[i]">
                 <mat-icon color="primary" *ngIf="result != null && result.correct == 'perfect'">done_all</mat-icon>
                 <mat-icon color="primary" *ngIf="result != null && result.correct == 'good'"> done </mat-icon>
                 <mat-icon color="warn" *ngIf="result != null && result.correct == 'wrong'"> clear</mat-icon>
-                <mat-icon *ngIf="result == null"> remove </mat-icon>
+                <mat-icon *ngIf="result != null && result == 'null'"> remove </mat-icon>
             </span>
-    </td>
+        </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

@@ -21,12 +21,11 @@ export class RankingPageComponent implements OnInit {
       joueurs => {
         this.joueurs$ = joueurs;
         joueurs.slice().reverse().forEach(joueur => {
-          this.mService.getLast8PronoResultsOfUser(joueur.id).pipe(take(1)).subscribe(
+          this.mService.getLastDayPronoResultsOfUser(joueur.id).pipe(take(1)).subscribe(
             result => {
               this.lasts8.push(result);
             })
         })
-        console.log(this.lasts8)
     }
   )
 }

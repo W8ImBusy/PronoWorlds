@@ -1,5 +1,5 @@
 <div>
-    <h1 *ngIf="(currentMatchs$|async) != ''">Matchs d'aujourd'hui</h1>
+    <h1 *ngIf="(currentMatchs$|async) != ''">Matchs de cette journée</h1>
     <div class="all-matchs-div">
         <div class="match-div" *ngFor="let match of currentMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong')) }">
             <h3>({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3>
@@ -9,7 +9,7 @@
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">{{(pronostiqued[match.id-1] != null && pronostiqued[match.id-1].correct !='wrong') ? 'Pronostiquer ce match' : 'Modifier mon pronostic'}}</button>
         </div>   
     </div>
-    <h1 *ngIf="(tomorrowMatchs$|async) != ''">Matchs de demain</h1>
+    <h1 *ngIf="(tomorrowMatchs$|async) != ''">Matchs de la journée suivante </h1>
     <div class="all-matchs-div">
         <div class="match-div" *ngFor="let match of tomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct === 'wrong'))}">
             <h3> ({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3>
@@ -19,28 +19,7 @@
             <button mat-raised-button color="primary" (click)="onPronostic(match.id)">{{(pronostiqued[match.id-1] != null && pronostiqued[match.id-1].correct !='wrong') ? 'Pronostiquer ce match' : 'Modifier mon pronostic'}}</button>
         </div>
     </div>
-    <h1 *ngIf="(afterTomorrowMatchs$|async) != ''" >Matchs du {{ afterTomorrowDate | date : 'dd/MM' }}</h1>
-    <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of afterTomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct == 'wrong'))}">
-            <h3>({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3>
-            <p> {{match.date}} à {{match.heure}}h </p>
-            <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart == ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}}</p>
-            <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart != ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}} avec {{pronostiqued[match.id-1].ecart}} games d'écart</p>
-            <button mat-raised-button color="primary" (click)="onPronostic(match.id)">{{(pronostiqued[match.id-1] != null && pronostiqued[match.id-1].correct !='wrong') ? 'Pronostiquer ce match' : 'Modifier mon pronostic'}}</button>
-        </div>
-    </div>
-
-    <h1 *ngIf="(after2TomorrowMatchs$|async) != ''" >Matchs du {{ after2TomorrowDate | date : 'dd/MM' }}</h1>
-    <div class="all-matchs-div">
-        <div class="match-div" *ngFor="let match of afterTomorrowMatchs$ | async" [ngClass]="{'pronostiqued' : (pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct == 'wrong'))}">
-            <h3>({{match.E1.region}}) {{match.E1.nom}} vs {{match.E2.nom}} ({{match.E2.region}})</h3>
-            <p> {{match.date}} à {{match.heure}}h </p>
-            <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart == ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}}</p>
-            <p *ngIf="(pronostiqued[match.id-1] != null && (pronostiqued[match.id-1].correct =='wrong') && (pronostiqued[match.id-1].ecart != ''))"> Mon Pronostic : {{pronostiqued[match.id-1].winner}} avec {{pronostiqued[match.id-1].ecart}} games d'écart</p>
-            <button mat-raised-button color="primary" (click)="onPronostic(match.id)">{{(pronostiqued[match.id-1] != null && pronostiqued[match.id-1].correct !='wrong') ? 'Pronostiquer ce match' : 'Modifier mon pronostic'}}</button>
-        </div>
-    </div>
-    <div *ngIf="(after2TomorrowMatchs$|async) == '' && (afterTomorrowMatchs$|async) == '' && (tomorrowMatchs$|async) == '' && (currentMatchs$|async) == ''">
+    <div *ngIf="(currentMatchs$|async) == '' && (tomorrowMatchs$|async) == ''">
          <h2> Aucun match pour le moment, veuillez insulter votre Game Master </h2>
     </div>
 </div>

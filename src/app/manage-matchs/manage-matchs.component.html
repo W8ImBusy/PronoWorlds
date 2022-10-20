@@ -51,9 +51,18 @@
                 <mat-label>Heure</mat-label>
                 <input type="number" matInput formControlName="heure">
             </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Day</mat-label>
+                <input type="number" matInput formControlName="day">
+            </mat-form-field>
         </div>
         <div id="authentication-div">
             <button mat-raised-button color="primary" [disabled]="!matchForm.valid" type="submit">Creer le match</button>
         </div>
     </form>
+    <div id="authentication-div">
+        <button mat-raised-button color="primary" (click)="onChangeDay()" type="button">Changer le jour de matchs</button>
+        <span>{{this.currentDay}}</span>
+    </div>
 </div> 
+

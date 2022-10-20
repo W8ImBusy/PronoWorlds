@@ -26,8 +26,9 @@
                 </mat-form-field>
             </div>
         </div>
+        <button mat-raised-button color="primary" (click)="onSetPronostic()" [disabled]="!pronoForm.valid"> Valider le pronostic </button>
     </form>
-    <button mat-raised-button color="primary" (click)="onSetPronostic()"> Valider le pronostic </button>
+    
 </div>    
 
 
