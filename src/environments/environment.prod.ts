@@ -11,5 +11,5 @@ export const environment = {
   },
   adminId : "HX0X3j2gQQQNlYZjTe6WONdacI62",
   dbroot : 'prod',
-  currentDay : 15
+  currentDay : 21
 };
